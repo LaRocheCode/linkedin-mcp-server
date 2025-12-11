@@ -27,7 +27,7 @@ exclude = ["assets*", "docs*", "tests*"]
 linkedin_mcp_server = ["py.typed"]
 
 [tool.uv.sources]
-linkedin-scraper = { git = "https://github.com/stickerdaniel/linkedin_scraper.git" }
+linkedin-scraper = { git = "https://github.com/stickerdaniel/linkedin_scraper.git", rev = "30f448df90af834bafb7d9e4caebfd0032605163" }
 
 [dependency-groups]
 dev = [

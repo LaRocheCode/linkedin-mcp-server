@@ -44,6 +44,34 @@ class MCPJSONFormatter(logging.Formatter):
         return json.dumps(log_data)
 
 
+class RedactingFilter(logging.Filter):
+    """Filter that masks sensitive information in log messages."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        """Mask sensitive data in the log record."""
+        if not isinstance(record.msg, str):
+            return True
+
+        # Redact potential cookie values (li_at=...)
+        if "li_at=" in record.msg:
+            try:
+                start = record.msg.find("li_at=") + 6
+                end = record.msg.find(";", start)
+                if end == -1:
+                    end = len(record.msg)
+
+                # If quoted, handle quotes
+                if start > 0 and record.msg[start-1] in ('"', "'"):
+                    end = record.msg.find(record.msg[start-1], start)
+
+                if end > start:
+                    record.msg = record.msg[:start] + "***" + record.msg[end:]
+            except Exception:
+                pass  # If redaction fails, don't drop the log, but risk is accepted to avoid crashing
+
+        return True
+
+
 class CompactFormatter(logging.Formatter):
     """Compact formatter that shortens logger names and uses shorter timestamps."""
 
@@ -105,6 +133,10 @@ def configure_logging(log_level: str = "WARNING", json_format: bool = False) -> 
     # Add console handler
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
+
+    # Add redaction filter
+    console_handler.addFilter(RedactingFilter())
+
     root_logger.addHandler(console_handler)
 
     # Set specific loggers to reduce noise

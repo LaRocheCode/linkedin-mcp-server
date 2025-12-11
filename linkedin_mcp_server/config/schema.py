@@ -44,10 +44,11 @@ class LinkedInConfig:
 
     def __repr__(self) -> str:
         """Mask sensitive data in logs."""
+        cookie_repr = "'***'" if self.cookie else "None"
         return (
             f"LinkedInConfig(email={self.email!r}, "
             "password='***', "
-            f"cookie={'***' if self.cookie else None})"
+            f"cookie={cookie_repr})"
         )
 
 
