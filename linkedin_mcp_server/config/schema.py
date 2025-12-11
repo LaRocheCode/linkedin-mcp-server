@@ -42,6 +42,14 @@ class LinkedInConfig:
     password: Optional[str] = None
     cookie: Optional[str] = None
 
+    def __repr__(self) -> str:
+        """Mask sensitive data in logs."""
+        return (
+            f"LinkedInConfig(email={self.email!r}, "
+            "password='***', "
+            f"cookie={'***' if self.cookie else None})"
+        )
+
 
 @dataclass
 class ServerConfig:
